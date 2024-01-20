@@ -8,8 +8,7 @@ In this post I will explain 3 forms of the Good Regulator Theorem as it currentl
 
 # The Original Good Regulator Theorem
 
-
-This theorem is by Conant and Ashby (link)
+This theorem is by Conant and Ashby
 
 Keep in mind the image of a crane operator working at a construction site. This theorem attempts to formalise this setting as such:
 
@@ -25,7 +24,7 @@ Think of these values using this computational graph. S is randomly sampled, R i
 
 In this setting we can prove the following theorem:
 
-### **Theorem (Good Regulator, Original)**
+## **Theorem (Good Regulator, Original)**
 
 > Let $\pi^*$ be a policy, where $\pi^*(r \ | \ s)$ gives the probability of selecting some regulator output $r$ given the system is in state $s$. Suppose that $\pi^*$ minimises the entropy of $Z$, and doesn't have any unnecessary complexity. Then, $\pi^*$ is a deterministic policy. That is, for any system state $s$, $\pi^*$ returns a corresponding $r$ with probability 1.
 
@@ -33,7 +32,7 @@ I’ll give a proof soon. But first, let’s interpret this result. It’s sayin
 
 Here, an optimal regulator is one which makes the output $Z$ very regular (i.e. low in entropy).
 
-### **Proof**
+## **Proof**
 
 First we assume the following things about $\pi^*$:
 
@@ -42,9 +41,11 @@ First we assume the following things about $\pi^*$:
 
 We want to show that, for each system state $s$, there exists some regulator output $r$ with probability 1. First we will show that for each $s$, there is only one corresponding outcome $Z$ under the policy $\pi^*$. Then we will show that for that outcome $z$, there is only one $r$ with nonzero probability.
 
-**Lemma:** Fix a system state $s$. Let $r, r'$ be regulator outputs with nonzero probability. Then $f(r, s) = f(r', s)$. ($f$ is just a deterministic function which gives the outcome $Z$)
+### **Lemma:** 
+Fix a system state $s$. Let $r, r'$ be regulator outputs with nonzero probability. Then $f(r, s) = f(r', s)$. ($f$ is just a deterministic function which gives the outcome $Z$)
 
-**Proof of Lemma:** First we introduce some notation. Let $\pi^*(r | s) = \alpha$, and $\pi^* (r' | s) = \beta$. We know $0 < \alpha < 1$, and likewise for $\beta$.
+### **Proof of Lemma:** 
+First we introduce some notation. Let $\pi^*(r | s) = \alpha$, and $\pi^* (r' | s) = \beta$. We know $0 < \alpha < 1$, and likewise for $\beta$.
 
 Suppose for contradiction that $f(r, s) \neq f(r', s)$. Then define a new policy $\bar{\pi}$ where:
 
@@ -63,9 +64,44 @@ Now let's analyse the first term. We know that $\frac{\alpha + \beta}{\alpha} >
 
 An analagous argument holds for the other term. So, we get $H_{\pi^*}(Z) - H_{\bar{\pi}}(Z) > 0$. This is a contradiction because $\pi^*$ was supposed to be entropy-minimising. So, $f(r, s) = f(r', s)$    $\square$
 
+### Finishing off the proof
+
 With this lemma nailed down, we can complete the proof. By the lemma, we know that each system state $s$ corresponds to only one outcome $Z$. Then by the simplicity assumption, we know that only one regulator output $r$ can correspond to the outcome $Z$ (for a fixed system state $s$). So, given some system state $s$, an optimal and simple regulator policy must only give one regulator output $r$ corresponding to $s$.
 
+## Why is this theorem useful?
+This original variant of the Good Regulator Theorem is quite bad, and Wentworth spent a lot of time shitting on it in [this post](https://www.lesswrong.com/posts/Dx9LoqsEh3gHNJMDk/fixing-the-good-regulator-theorem).
+
+The main useful result of this theorem is that whatever policy the agent is using, there is an equivalent way to choose the same actions on all inputs simply by using some deterministic function of $S$.
+
 # Good Regulators with Incomplete Information
+
+[This theorem is by John Wentworth](https://www.lesswrong.com/posts/Dx9LoqsEh3gHNJMDk/fixing-the-good-regulator-theorem).
+
+Here's a simple way we can improve the previous theorem, to make it hold when the agent only has incomplete information about the environment.
+
+Here's the setup: The crane driver looks out the window and observes the sate of the construction site ($X$). Then they wait 5 seconds without looking outside. In that time, people and objects have moved slightly to a new configuration ($S$). Then, using only their knowledge from 5 seconds ago, the crane driver chooses what to do ($R$). Here's a picture:
+
+![](https://39669.cdn.cke-cs.com/rQvD3VnunXZu34m86e5f/images/e0fd376241cc08413b74e596a070de888d7f461dbbe00e6f.png)
+
+More formally: First, we sample the “incomplete information” $X$. Then we sample $S$ from some conditional distribution given $X$. We want to find a policy $\pi^*$, where $\pi^*(r\ |\ x)$ represents the probability of selecting regulator output $R$ conditional on the incomplete information $X$. 
+
+## Theorem (Good Regulator, Incomplete Information):
+> Let $\pi^*$ be a policy, where $\pi^*(r\ |\ x)$ gives the probability of selecting regulator output $r$ given incomplete information $x$. 
+>
+> Also let $g: X \to \text{Dist}(S)$ be a function which gives conditional probability distributions on $S$. (Here, the notation $\text{Dist} (S)$ refers to the set of all probability distributions over the random variable $S$). That is,
+>$$g(x) = P (S \ | \  X=x)$$
+>We assume the following:
+> * *Optimal:* $\pi^*$ optimises expected utility function, for some utility function $u: \mathcal Z \to \mathbb R$
+> * *Simple*: For all $x_1, x_2$, if $g(x_1) = g(x_2)$ then $\pi^*(R | X=x_1) = \pi^*(R | X=x_2)$. Intuitively, if two pieces of incomplete information lead to the same distribution over $S$ (at least as far as we know), then we should act the same.
+> 
+> Then the theorem states that $\exists \ \varphi: \text{im} (g) \to \text{Dist} (R)$ such that $\varphi ( g (x) ) = \pi^*(R \ | \ X=x)$ for all possible incomplete information $x$. (Here, $\text{im} (g)$ refers to the image of all $x$ values under the function $g$). In other words, for any fixed $x$, the distribution over actions given by $\pi^*$ must correspond uniquely to the conditional distribution over $S$
+
+One design choice John made was to redefine optimal to mean “maximising expected utility”. This is more familiar here on LessWrong, but it is a simpler criterion than minimising entropy. It's simpler because when maximising utility, our utility  Here's the proof:
+
+
+
+
+# Good Regulators with Incomplete Information (OLD AND BAD)
 
 This theorem is by John Wentworth (link)
 
@@ -77,7 +113,7 @@ Here's the setup: The crane driver looks out the window and observes the sate of
 
 ![](https://39669.cdn.cke-cs.com/rQvD3VnunXZu34m86e5f/images/e0fd376241cc08413b74e596a070de888d7f461dbbe00e6f.png)
 
-More formally: First, we sample the “incomplete information” $X$. Then we sample $S$ from some( conditional distribution given $X$. We want to find a policy $\pi^*$, where $\pi^*(r\ |\ x)$ represents the probability of selecting regulator output $R$ conditional on the incomplete information $X$. 
+More formally: First, we sample the “incomplete information” $X$. Then we sample $S$ from some conditional distribution given $X$. We want to find a policy $\pi^*$, where $\pi^*(r\ |\ x)$ represents the probability of selecting regulator output $R$ conditional on the incomplete information $X$. 
 
 One "design choice" John made was to redefine optimal to mean “maximising expected utility”. This is more familiar here on LessWrong, but it is a simpler criterion than minimising entropy. This proof (and the third proof) may not hold for entropy-minimising regulators.
 
