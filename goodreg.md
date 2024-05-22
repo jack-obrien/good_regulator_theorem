@@ -26,25 +26,23 @@ In this setting we can prove the following theorem:
 
 ## **Theorem (Good Regulator, Original)**
 
-> Let $\pi^*$ be a policy, where $\pi^*(r \ | \ s)$ gives the probability of selecting some regulator output $r$ given the system is in state $s$. Suppose that $\pi^*$ minimises the entropy of $Z$, and doesn't have any unnecessary complexity. Then, $\pi^*$ is a deterministic policy. That is, for any system state $s$, $\pi^*$ returns a corresponding $r$ with probability 1.
+> Let $\pi^*$ be a policy, where $\pi^*(r \ | \ s)$ gives the probability of selecting some regulator output $r$ given the system is in state $s$. Suppose the following about $\pi^*$:
+*   *Optimal:* For all policies $\pi, \ H_{\pi^*}(Z) \leq H_{\pi}(Z)$.
+*   *Simple:* We assume that $\pi^*$ has no unnecessary complexity. Fix a system state $s$. Let $r, r'$ be regulator outputs where $r \neq r'$. Suppose $f(r, s) = f(r', s)$. ($f$ is just a deterministic function giving the outcome $Z$). Then $r$ has probability 0 or $r'$ has probability 0. 
+>
+> Then, $\pi^*$ is a deterministic policy. That is, for any system state $s$, $\pi^*$ returns a corresponding $r$ with probability 1.
 
 I’ll give a proof soon. But first, let’s interpret this result. It’s saying that the regulator’s output must be completely determined by the system S. Or: the only relevant information is the information in the system - nothing more, nothing less.
 
 Here, an optimal regulator is one which makes the output $Z$ very regular (i.e. low in entropy).
 
-## **Proof**
-
-First we assume the following things about $\pi^*$:
-
-*   *Optimal:* For all policies $\pi, \ H_{\pi^*}(Z) \leq H_{\pi}(Z)$.
-*   *Simple:* We assume that $\pi^*$ has no unnecessary complexity. Fix a system state $s$. Let $r, r'$ be regulator outputs where $r \neq r'$. Suppose $f(r, s) = f(r', s)$. ($f$ is just a deterministic function giving the outcome $Z$). Then $r$ has probability 0 or $r'$ has probability 0. 
-
+## Proof
 We want to show that, for each system state $s$, there exists some regulator output $r$ with probability 1. First we will show that for each $s$, there is only one corresponding outcome $Z$ under the policy $\pi^*$. Then we will show that for that outcome $z$, there is only one $r$ with nonzero probability.
 
-### **Lemma:** 
+### Lemma:
 Fix a system state $s$. Let $r, r'$ be regulator outputs with nonzero probability. Then $f(r, s) = f(r', s)$. ($f$ is just a deterministic function which gives the outcome $Z$)
 
-### **Proof of Lemma:** 
+### Proof of Lemma: 
 First we introduce some notation. Let $\pi^*(r | s) = \alpha$, and $\pi^* (r' | s) = \beta$. We know $0 < \alpha < 1$, and likewise for $\beta$.
 
 Suppose for contradiction that $f(r, s) \neq f(r', s)$. Then define a new policy $\bar{\pi}$ where:
@@ -58,7 +56,7 @@ and all other probabilities are exactly the same as $\pi^*$. Then we show that�
 
 That is, we show that $H_{\pi^*}(Z) - H_{\bar{\pi}}(Z) > 0$:
 
-My earlier working is in writersblock2.txt
+
 
 Now let's analyse the first term. We know that $\frac{\alpha + \beta}{\alpha} > 1$. So, $\log \left(\frac{\alpha + \beta}{\alpha}\right) > 0$. Since $\alpha > 0$, we know that the whole term is greater than 0.
 
@@ -83,7 +81,7 @@ Here's the setup: The crane driver looks out the window and observes the sate of
 
 ![](https://39669.cdn.cke-cs.com/rQvD3VnunXZu34m86e5f/images/e0fd376241cc08413b74e596a070de888d7f461dbbe00e6f.png)
 
-More formally: First, we sample the “incomplete information” $X$. Then we sample $S$ from some conditional distribution given $X$. We want to find a policy $\pi^*$, where $\pi^*(r\ |\ x)$ represents the probability of selecting regulator output $R$ conditional on the incomplete information $X$. 
+More formally: First, we sample the “incomplete information” $X$. Then we sample $S$ from some conditional distribution given $X$. We want to find a policy $\pi^*$, where $\pi^*(r\ |\ x)$ represents the probability of selecting regulator output $R=r$ conditional on the incomplete information $X=x$. 
 
 ## Theorem (Good Regulator, Incomplete Information):
 > Let $\pi^*$ be a policy, where $\pi^*(r\ |\ x)$ gives the probability of selecting regulator output $r$ given incomplete information $x$. 
